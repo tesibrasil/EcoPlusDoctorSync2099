@@ -20,19 +20,24 @@ namespace EcoplusDoctorSync
             LoadJson();
         }
 
-        public Root conectionsList;
+        public Root connectionsList;
 
         public Root selectedConnetions;
 
         private void LoadJson()
         {
 
-            conectionsList = ConfigurationHelper.ReadValue();
+            connectionsList = new Root();
+            connectionsList.Conexoes = new List<Conexao>();
+            connectionsList = ConfigurationHelper.ReadValue();
 
-            foreach (var conn in conectionsList.Conexoes)
+            if (connectionsList.Conexoes != null)
             {
-              
-                clbConexoes.Items.Add(conn.Apelido);
+                foreach (var conn in connectionsList.Conexoes)
+                {
+
+                    clbConexoes.Items.Add(conn.Apelido);
+                }
             }
 
             clbConexoes.Refresh();
@@ -51,11 +56,16 @@ namespace EcoplusDoctorSync
                 if (clbConexoes.GetItemChecked(i))
                 {
 
-                    Conexao conexao = conectionsList.Conexoes.FirstOrDefault(con => con.Apelido == clbConexoes.Items[i].ToString());
+                    Conexao conexao = connectionsList.Conexoes.FirstOrDefault(con => con.Apelido == clbConexoes.Items[i].ToString());
                     selectedConnetions.Conexoes.Add(conexao);
                 }
             }
-            
+
+            this.Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
             this.Close();
         }
     }

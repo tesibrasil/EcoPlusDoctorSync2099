@@ -41,9 +41,9 @@
             // lblUsuario
             // 
             this.lblUsuario.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsuario.Location = new System.Drawing.Point(12, 15);
+            this.lblUsuario.Location = new System.Drawing.Point(25, 15);
             this.lblUsuario.Name = "lblUsuario";
-            this.lblUsuario.Size = new System.Drawing.Size(387, 25);
+            this.lblUsuario.Size = new System.Drawing.Size(312, 25);
             this.lblUsuario.TabIndex = 4;
             this.lblUsuario.Text = "USUÁRIO";
             this.lblUsuario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -51,18 +51,18 @@
             // txtUsuario
             // 
             this.txtUsuario.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtUsuario.Location = new System.Drawing.Point(12, 40);
+            this.txtUsuario.Location = new System.Drawing.Point(25, 43);
             this.txtUsuario.Name = "txtUsuario";
-            this.txtUsuario.Size = new System.Drawing.Size(387, 20);
+            this.txtUsuario.Size = new System.Drawing.Size(312, 20);
             this.txtUsuario.TabIndex = 5;
             this.txtUsuario.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblSenha
             // 
             this.lblSenha.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSenha.Location = new System.Drawing.Point(12, 79);
+            this.lblSenha.Location = new System.Drawing.Point(25, 79);
             this.lblSenha.Name = "lblSenha";
-            this.lblSenha.Size = new System.Drawing.Size(387, 25);
+            this.lblSenha.Size = new System.Drawing.Size(312, 25);
             this.lblSenha.TabIndex = 6;
             this.lblSenha.Text = "SENHA";
             this.lblSenha.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -70,16 +70,17 @@
             // txtSenha
             // 
             this.txtSenha.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSenha.Location = new System.Drawing.Point(12, 107);
+            this.txtSenha.Location = new System.Drawing.Point(25, 107);
             this.txtSenha.Name = "txtSenha";
             this.txtSenha.PasswordChar = '*';
-            this.txtSenha.Size = new System.Drawing.Size(387, 20);
+            this.txtSenha.Size = new System.Drawing.Size(312, 20);
             this.txtSenha.TabIndex = 7;
             this.txtSenha.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtSenha.KeyPress += txtPass_KeyPress;
             // 
             // btnEntrar
             // 
-            this.btnEntrar.Location = new System.Drawing.Point(15, 150);
+            this.btnEntrar.Location = new System.Drawing.Point(25, 150);
             this.btnEntrar.Name = "btnEntrar";
             this.btnEntrar.Size = new System.Drawing.Size(120, 39);
             this.btnEntrar.TabIndex = 8;
@@ -89,7 +90,7 @@
             // 
             // btnSair
             // 
-            this.btnSair.Location = new System.Drawing.Point(279, 150);
+            this.btnSair.Location = new System.Drawing.Point(217, 150);
             this.btnSair.Name = "btnSair";
             this.btnSair.Size = new System.Drawing.Size(120, 39);
             this.btnSair.TabIndex = 9;
@@ -100,9 +101,9 @@
             // lblMensagem
             // 
             this.lblMensagem.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMensagem.Location = new System.Drawing.Point(9, 198);
+            this.lblMensagem.Location = new System.Drawing.Point(-1, 198);
             this.lblMensagem.Name = "lblMensagem";
-            this.lblMensagem.Size = new System.Drawing.Size(387, 25);
+            this.lblMensagem.Size = new System.Drawing.Size(372, 25);
             this.lblMensagem.TabIndex = 10;
             this.lblMensagem.Text = "MENSAGEM";
             this.lblMensagem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -111,7 +112,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 232);
+            this.ClientSize = new System.Drawing.Size(373, 232);
             this.Controls.Add(this.lblMensagem);
             this.Controls.Add(this.btnSair);
             this.Controls.Add(this.btnEntrar);
@@ -121,6 +122,7 @@
             this.Controls.Add(this.txtSenha);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AuthForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Eco+ DoctorSync 2099 - Login";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);

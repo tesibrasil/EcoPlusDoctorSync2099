@@ -16,18 +16,16 @@ namespace EcoplusDoctorSync
 
         public MainForm()
         {
-
             InitializeComponent();
-
         }
 
 
-        Usuario usuarioLogado;
+        //Usuario usuarioLogado;
         private void MainForm_Load(object sender, EventArgs e)
         {
             ckbManual.Checked = true;
             ckbManual.Checked = false;
-            // LogFileHelper.Get().Write("Usuário Logado", txtLog);
+            LogFileHelper.Get().Write($"Usuário Logado: {TheSync.UsuarioLogado.UserName}", txtLog);
 #if DEBUG
             txtUsername.Text = "Tesi.COM.BR\\MEDICO";
             txtSobrenome.Text = "CIRURGIAO";
@@ -201,7 +199,7 @@ namespace EcoplusDoctorSync
 
             selectedConnetions = formConexao.selectedConnetions;
 
-            if(selectedConnetions.Conexoes.Count == 0) 
+            if(selectedConnetions.Conexoes == null || selectedConnetions.Conexoes.Count == 0) 
             {
                 MessageBox.Show("Nenhuma conexão foi selecionada.\nInicie o processo novamente ou configure novas conexões", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;

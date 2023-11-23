@@ -55,6 +55,7 @@ namespace EcoplusDoctorSync
 
             lvConexoes.Refresh();
 
+            ConfigurationHelper.WriteJsonFile(connectionsList);
             Limpar();
         }
 
@@ -73,7 +74,7 @@ namespace EcoplusDoctorSync
                 }
             }
 
-
+            
             lvConexoes.Refresh();
 
         }
@@ -96,6 +97,7 @@ namespace EcoplusDoctorSync
                 // Obter o texto da primeira coluna (índice 0) do item selecionado
                 string textoDaPrimeiraColuna = lvConexoes.SelectedItems[0].SubItems[0].Text;
                 Popularform(textoDaPrimeiraColuna);
+                btnExcluir.Enabled = true;
             }
         }
 
@@ -127,6 +129,8 @@ namespace EcoplusDoctorSync
             txtBancoDeDados.Text = string.Empty;
             txtStringConexao.Text = string.Empty;
 
+            btnExcluir.Enabled = false;
+
             if (lvConexoes.SelectedItems.Count > 0)
             {
                 // Desselecionar a linha selecionada
@@ -135,6 +139,32 @@ namespace EcoplusDoctorSync
 
         }
 
+        private void Excluir() 
+        {
 
+            if (lvConexoes.SelectedItems.Count != 0)
+            {
+                string apelido = lvConexoes.SelectedItems[0].SubItems[0].Text;
+                int index = lvConexoes.SelectedItems[0].Index;
+                connectionsList.Conexoes.RemoveAll(c => c.Apelido == apelido);
+                lvConexoes.Items.RemoveAt(index);
+                ConfigurationHelper.WriteJsonFile(connectionsList);
+            }
+            else 
+            {
+
+                MessageBox.Show("Por favor selecione um conexão a ser excluída", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+
+
+            lvConexoes.Refresh();
+            Limpar();
+        }
+
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            Excluir();
+        }
     }
 }

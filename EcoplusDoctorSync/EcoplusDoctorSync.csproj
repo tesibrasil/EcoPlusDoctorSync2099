@@ -94,6 +94,7 @@
     <Compile Include="LogFileHelper.cs" />
     <Compile Include="Models\Conexao.cs" />
     <Compile Include="Models\Medico.cs" />
+    <Compile Include="Models\TheSync.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConectionForm));
             this.ckbManual = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblStringConexao = new System.Windows.Forms.Label();
@@ -44,7 +45,7 @@
             this.txtSenha = new System.Windows.Forms.TextBox();
             this.btnSalva = new System.Windows.Forms.Button();
             this.btnFechar = new System.Windows.Forms.Button();
-            this.btnInicializar = new System.Windows.Forms.Button();
+            this.btnExcluir = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnFindXLS = new System.Windows.Forms.Button();
             this.txtExcelPath = new System.Windows.Forms.TextBox();
@@ -227,17 +228,18 @@
             this.btnFechar.UseVisualStyleBackColor = true;
             this.btnFechar.Click += new System.EventHandler(this.btnFechar_Click);
             // 
-            // btnInicializar
+            // btnExcluir
             // 
-            this.btnInicializar.Enabled = false;
-            this.btnInicializar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnInicializar.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnInicializar.Location = new System.Drawing.Point(554, 18);
-            this.btnInicializar.Name = "btnInicializar";
-            this.btnInicializar.Size = new System.Drawing.Size(114, 30);
-            this.btnInicializar.TabIndex = 28;
-            this.btnInicializar.Text = "EDITAR";
-            this.btnInicializar.UseVisualStyleBackColor = true;
+            this.btnExcluir.Enabled = false;
+            this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExcluir.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExcluir.Location = new System.Drawing.Point(554, 18);
+            this.btnExcluir.Name = "btnExcluir";
+            this.btnExcluir.Size = new System.Drawing.Size(114, 30);
+            this.btnExcluir.TabIndex = 28;
+            this.btnExcluir.Text = "EXCLUIR";
+            this.btnExcluir.UseVisualStyleBackColor = true;
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
             // 
             // groupBox2
             // 
@@ -305,13 +307,14 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSalva);
             this.Controls.Add(this.btnFechar);
-            this.Controls.Add(this.btnInicializar);
+            this.Controls.Add(this.btnExcluir);
             this.Controls.Add(this.ckbManual);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConectionForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "ConectionForm";
+            this.Text = "Eco+ DoctorSync 2099 - Conexões";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -339,7 +342,7 @@
         private System.Windows.Forms.TextBox txtStringConexao;
         private System.Windows.Forms.Button btnSalva;
         private System.Windows.Forms.Button btnFechar;
-        private System.Windows.Forms.Button btnInicializar;
+        private System.Windows.Forms.Button btnExcluir;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnFindXLS;
         private System.Windows.Forms.TextBox txtExcelPath;

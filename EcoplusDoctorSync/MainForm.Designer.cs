@@ -153,6 +153,7 @@ namespace EcoplusDoctorSync
             this.txtCRM.TabIndex = 13;
             this.txtCRM.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtCRM.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
+            this.txtCRM.KeyPress += txtCRM_KeyPress;
             // 
             // lblTratamento
             // 
@@ -410,7 +411,7 @@ namespace EcoplusDoctorSync
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Ecoplus Doctor Sync";
+            this.Text = "Eco+ DoctorSync 2099";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
@@ -457,7 +458,6 @@ namespace EcoplusDoctorSync
         private System.Windows.Forms.TextBox txtTratamento;
         private System.Windows.Forms.Label lblCRM;
         private System.Windows.Forms.TextBox txtCRM;
-        private Usuario usuario;
 
     }
 }

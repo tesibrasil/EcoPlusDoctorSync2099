@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectionListForm));
             this.clbConexoes = new System.Windows.Forms.CheckedListBox();
             this.btnProsseguir = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -42,7 +43,7 @@
             this.clbConexoes.Size = new System.Drawing.Size(361, 244);
             this.clbConexoes.TabIndex = 0;
             // 
-            // button1
+            // btnProsseguir
             // 
             this.btnProsseguir.Location = new System.Drawing.Point(12, 276);
             this.btnProsseguir.Name = "btnProsseguir";
@@ -60,6 +61,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "FECHAR";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // ConnectionListForm
             // 
@@ -69,8 +71,10 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.btnProsseguir);
             this.Controls.Add(this.clbConexoes);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConnectionListForm";
-            this.Text = "ConnectionListForm";
+            this.Text = "Eco+ DoctorSync 2099";
             this.ResumeLayout(false);
 
         }

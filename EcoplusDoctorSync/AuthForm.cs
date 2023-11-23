@@ -56,28 +56,43 @@ namespace EcoplusDoctorSync
 
         private void btnEntrar_Click(object sender, EventArgs e)
         {
+            Entrar();
+        }
+
+        private void btnSair_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Entrar() 
+        {
             if (!Validacao())
                 return;
 
             Usuario atualUsuario = Autenticacao();
 
-            if(atualUsuario != null) 
+            if (atualUsuario != null)
             {
+                TheSync.UsuarioLogado = new Usuario { Id = atualUsuario.Id, UserName = atualUsuario.UserName };
                 this.Hide();
                 MainForm fomulario = new MainForm();
                 fomulario.ShowDialog();
 
                 this.Close();
             }
-            else 
+            else
             {
                 lblMensagem.Text = "USUÁRIO E/OU SENHA INCORRETOS.";
             }
+
         }
 
-        private void btnSair_Click(object sender, EventArgs e)
+        private void txtPass_KeyPress(object sender, KeyPressEventArgs e)
         {
-            this.Close();
+            if(e.KeyChar == (char)Keys.Enter)
+            {
+                Entrar();
+            }
         }
     }
 }
