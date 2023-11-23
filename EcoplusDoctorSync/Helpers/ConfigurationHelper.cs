@@ -16,23 +16,24 @@ namespace EcoplusDoctorSync.Helpers
         public static Root ReadValue()
 
         {
-            
+
             Root root = new Root();
 
-            try
+            if (File.Exists(m_sCfgFilePath))
             {
-                string json = File.ReadAllText(m_sCfgFilePath);
+                try
+                {
+                    string json = File.ReadAllText(m_sCfgFilePath);
 
-                 root = JsonConvert.DeserializeObject<Root>(json);
+                    root = JsonConvert.DeserializeObject<Root>(json);
 
-                
 
+                }
+                catch (Exception ex)
+                {
+                    //                
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ocorreu um erro: {ex.Message}");
-            }
-
             return root;
 
         }
@@ -49,32 +50,32 @@ namespace EcoplusDoctorSync.Helpers
                 if (File.Exists(m_sCfgFilePath))
                 {
                     File.WriteAllText(m_sCfgFilePath, json);
-              //      Console.WriteLine("Arquivo JSON sobrescrito com sucesso!");
+                    //      Console.WriteLine("Arquivo JSON sobrescrito com sucesso!");
                 }
                 else
                 {
                     File.WriteAllText(m_sCfgFilePath, json);
-              //      Console.WriteLine("Arquivo JSON criado com sucesso!");
+                    //      Console.WriteLine("Arquivo JSON criado com sucesso!");
                 }
             }
             catch (Exception ex)
             {
- //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
+                //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
             }
 
 
 
 
-//            try
-//            {
-//                string json = JsonConvert.SerializeObject(root, Formatting.Indented);
-//                File.WriteAllText(m_sCfgFilePath, json);
-////                Console.WriteLine("Arquivo JSON salvo com sucesso!");
-//            }
-//            catch (Exception ex)
-//            {
-// //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
-//            }
+            //            try
+            //            {
+            //                string json = JsonConvert.SerializeObject(root, Formatting.Indented);
+            //                File.WriteAllText(m_sCfgFilePath, json);
+            ////                Console.WriteLine("Arquivo JSON salvo com sucesso!");
+            //            }
+            //            catch (Exception ex)
+            //            {
+            // //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
+            //            }
         }
     }
 }

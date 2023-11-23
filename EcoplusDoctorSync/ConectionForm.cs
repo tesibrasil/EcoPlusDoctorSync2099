@@ -20,13 +20,13 @@ namespace EcoplusDoctorSync
         {
             InitializeComponent();
 
-            conectionsList = new Root();
-            conectionsList.Conexoes = new List<Conexao>();
+            connectionsList = new Root();
+            connectionsList.Conexoes = new List<Conexao>();
             LoadJson();
 
         }
 
-        public Root conectionsList; 
+        public Root connectionsList; 
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
@@ -35,7 +35,7 @@ namespace EcoplusDoctorSync
             {
                 string apelido = lvConexoes.SelectedItems[0].SubItems[0].Text;
                 int index = lvConexoes.SelectedItems[0].Index;
-                conectionsList.Conexoes.RemoveAll(c => c.Apelido == apelido);
+                connectionsList.Conexoes.RemoveAll(c => c.Apelido == apelido);
                 lvConexoes.Items.RemoveAt(index);
             }
 
@@ -48,7 +48,7 @@ namespace EcoplusDoctorSync
                 Senha = txtSenha.Text
             };
 
-            conectionsList.Conexoes.Add(conexao);
+            connectionsList.Conexoes.Add(conexao);
             ListViewItem novoItem = new ListViewItem(new[] { conexao.Apelido, conexao.GetStringDeConexao() });
 
             lvConexoes.Items.Add(novoItem);
@@ -61,14 +61,18 @@ namespace EcoplusDoctorSync
         private void LoadJson() 
         {
 
-            conectionsList = ConfigurationHelper.ReadValue();
+            connectionsList = ConfigurationHelper.ReadValue();
 
-            foreach (var conn in conectionsList.Conexoes)
+            if(connectionsList.Conexoes != null)
             {
-                ListViewItem novoItem = new ListViewItem(new[] { conn.Apelido, conn.GetStringDeConexao() });
-                lvConexoes.Items.Add(novoItem);
+                foreach (var conn in connectionsList.Conexoes)
+                {
+                    ListViewItem novoItem = new ListViewItem(new[] { conn.Apelido, conn.GetStringDeConexao() });
+                    lvConexoes.Items.Add(novoItem);
 
+                }
             }
+
 
             lvConexoes.Refresh();
 
@@ -76,7 +80,7 @@ namespace EcoplusDoctorSync
 
         private void CloseForm()
         {
-            ConfigurationHelper.WriteJsonFile(conectionsList);
+            ConfigurationHelper.WriteJsonFile(connectionsList);
             this.Close();
         }
 
@@ -98,7 +102,7 @@ namespace EcoplusDoctorSync
         private void Popularform(string conexaoSelecionada) 
         {
 
-            Conexao conexao = conectionsList.Conexoes.FirstOrDefault(con => con.Apelido == conexaoSelecionada);
+            Conexao conexao = connectionsList.Conexoes.FirstOrDefault(con => con.Apelido == conexaoSelecionada);
 
             if (conexao != null) 
             { 
