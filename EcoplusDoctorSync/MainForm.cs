@@ -31,7 +31,7 @@ namespace EcoplusDoctorSync
 #if DEBUG
             txtUsername.Text = "Tesi.COM.BR\\MEDICO";
             txtSobrenome.Text = "CIRURGIAO";
-            txtNome.Text = "SANDRO";
+            txtNome.Text = "MEDICO";
             txt3l3n.Text = "987654";
             txtTratamento.Text = "Dr.";
             txtCRM.Text = "123456";
@@ -201,8 +201,11 @@ namespace EcoplusDoctorSync
 
             selectedConnetions = formConexao.selectedConnetions;
 
-
-            List<string[]> listaMedicos = new List<string[]>();
+            if(selectedConnetions.Conexoes.Count == 0) 
+            {
+                MessageBox.Show("Nenhuma conexão foi selecionada.\nInicie o processo novamente ou configure novas conexões", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             List<Medico> listaMedicosX = new List<Medico>();
 
@@ -225,7 +228,7 @@ namespace EcoplusDoctorSync
             {
                 listaMedicosX = ImportarMedicosDoCSV(ofdExcel.FileName);
 
-                if (listaMedicos.Count == 0)
+                if (listaMedicosX.Count == 0)
                 {
                     MessageBox.Show("Nenhum médico foi importado do arquivo apontado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;

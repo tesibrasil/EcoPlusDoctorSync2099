@@ -152,9 +152,7 @@ namespace EcoplusDoctorSync
             this.txtCRM.Size = new System.Drawing.Size(207, 26);
             this.txtCRM.TabIndex = 13;
             this.txtCRM.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtCRM.Leave += new System.EventHandler(CamposAssinatura_EventLeave);
-            this.txtCRM.KeyPress += txtCRM_KeyPress;
-
+            this.txtCRM.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
             // 
             // lblTratamento
             // 
@@ -165,7 +163,6 @@ namespace EcoplusDoctorSync
             this.lblTratamento.TabIndex = 10;
             this.lblTratamento.Text = "Tratamento";
             this.lblTratamento.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.txtTratamento.Leave += new System.EventHandler(CamposAssinatura_EventLeave);
             // 
             // txtTratamento
             // 
@@ -175,6 +172,7 @@ namespace EcoplusDoctorSync
             this.txtTratamento.Size = new System.Drawing.Size(207, 26);
             this.txtTratamento.TabIndex = 11;
             this.txtTratamento.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtTratamento.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
             // 
             // lbl3l3n
             // 
@@ -224,7 +222,7 @@ namespace EcoplusDoctorSync
             this.lblSobrenome.Size = new System.Drawing.Size(435, 25);
             this.lblSobrenome.TabIndex = 2;
             this.lblSobrenome.Text = "SOBRENOME";
-            this.lblSobrenome.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;           
+            this.lblSobrenome.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtSobrenome
             // 
@@ -236,7 +234,7 @@ namespace EcoplusDoctorSync
             this.txtSobrenome.TabIndex = 3;
             this.txtSobrenome.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtSobrenome.TextChanged += new System.EventHandler(this.txtSobrenome_TextChanged);
-            this.txtSobrenome.Leave += new System.EventHandler(CamposAssinatura_EventLeave);
+            this.txtSobrenome.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
             // 
             // lblNome
             // 
@@ -258,7 +256,7 @@ namespace EcoplusDoctorSync
             this.txtNome.TabIndex = 5;
             this.txtNome.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtNome.TextChanged += new System.EventHandler(this.txtNome_TextChanged);
-            this.txtNome.Leave += new System.EventHandler(CamposAssinatura_EventLeave);
+            this.txtNome.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
             // 
             // lblAssinatura
             // 
@@ -308,7 +306,7 @@ namespace EcoplusDoctorSync
             this.btnFindXLS.Font = new System.Drawing.Font("Tahoma", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFindXLS.Location = new System.Drawing.Point(6, 36);
             this.btnFindXLS.Name = "btnFindXLS";
-            this.btnFindXLS.Size = new System.Drawing.Size(358, 30);
+            this.btnFindXLS.Size = new System.Drawing.Size(436, 30);
             this.btnFindXLS.TabIndex = 12;
             this.btnFindXLS.Text = "IMPORTAR ARQUIVO CSV";
             this.btnFindXLS.UseVisualStyleBackColor = true;
@@ -321,7 +319,8 @@ namespace EcoplusDoctorSync
             this.txtExcelPath.Enabled = false;
             this.txtExcelPath.Location = new System.Drawing.Point(6, 72);
             this.txtExcelPath.Name = "txtExcelPath";
-            this.txtExcelPath.Size = new System.Drawing.Size(358, 26);
+            this.txtExcelPath.ReadOnly = true;
+            this.txtExcelPath.Size = new System.Drawing.Size(436, 26);
             this.txtExcelPath.TabIndex = 13;
             this.txtExcelPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -388,7 +387,7 @@ namespace EcoplusDoctorSync
             this.btnConexoes.TabIndex = 25;
             this.btnConexoes.Text = "CONEXÕES";
             this.btnConexoes.UseVisualStyleBackColor = true;
-            this.btnConexoes.Click += new System.EventHandler(btnConexoes_Click);
+            this.btnConexoes.Click += new System.EventHandler(this.btnConexoes_Click);
             // 
             // MainForm
             // 
