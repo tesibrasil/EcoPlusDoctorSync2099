@@ -18,6 +18,7 @@ namespace EcoplusDoctorSync.Helpers
         {
 
             Root root = new Root();
+            root.Conexoes = new List<Conexao>();
 
             if (File.Exists(m_sCfgFilePath))
             {
