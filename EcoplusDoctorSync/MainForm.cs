@@ -35,7 +35,7 @@ namespace EcoplusDoctorSync
             LogFileHelper.Get().Write($"Usuário Sync Logado: {TheSync.UsuarioLogado.UserName}", txtLog);
             LogFileHelper.Get().Write($"=================================================", txtLog);
             LogFileHelper.Get().Write($"\n", txtLog);
-#if DEBUG
+
             txtUsername.Text = "FLEURY.COM.BR\\MEDICO";
             txtSobrenome.Text = "CIRURGIAO";
             txtNome.Text = "MEDICO";
@@ -47,7 +47,7 @@ namespace EcoplusDoctorSync
             btnInicializar.Enabled = true;
             btnInicializar.Select();
 
-#endif
+
         }
 
         private void btnInicializar_Click(object sender, EventArgs e)
@@ -142,7 +142,7 @@ namespace EcoplusDoctorSync
 
             picBoxRubrica.ImageLocation = txtImagePath.Text;
             picBoxRubrica.Load();
-            
+
         }
 
         private void ckbManual_CheckedChanged(object sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace EcoplusDoctorSync
 
             selectedConnetions = formConexao.selectedConnetions;
 
-            if(selectedConnetions == null || selectedConnetions.Conexoes.Count == 0) 
+            if (selectedConnetions == null || selectedConnetions.Conexoes.Count == 0)
             {
                 MessageBox.Show("Nenhuma conexão foi selecionada.\nInicie o processo novamente ou configure novas conexões", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -250,12 +250,18 @@ namespace EcoplusDoctorSync
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
             ckbManual.Enabled = false;
-            LogFileHelper.Get().Write("\n", txtLog); 
+            LogFileHelper.Get().Write("\n", txtLog);
+
+            int iMedico = 0;
 
             try
             {
                 foreach (var medico in listaMedicosX)
                 {
+                    iMedico++;
+                    LogFileHelper.Get().Write($"Médico {iMedico} de {listaMedicosX.Count}", txtLog);
+                    LogFileHelper.Get().Write("\n", txtLog);
+
 
                     LogFileHelper.Get().Write("INICIO     --> " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), txtLog);
                     LogFileHelper.Get().Write("USERNAME   --> " + medico.sUserName, txtLog);
@@ -269,19 +275,28 @@ namespace EcoplusDoctorSync
 
                     LogFileHelper.Get().Write("\n", txtLog);
 
+                    int iConn = 0;
 
                     foreach (var conn in selectedConnetions.Conexoes)
                     {
+
+                        iConn++;
+                        LogFileHelper.Get().Write($"Servidor {iMedico} de {selectedConnetions.Conexoes.Count}", txtLog);
+                        LogFileHelper.Get().Write("\n", txtLog);
+
                         //Processa todas as mensagens do Windows que está na atual fila de mensagem.
                         Application.DoEvents();
+
 
                         //Pega a string de conexão
                         string connStr = conn.GetStringDeConexao();
 
-#if DEBUG
-                        LogFileHelper.Get().Write(connStr, txtLog);
-                        LogFileHelper.Get().Write("\n", txtLog);
-#endif
+                        if (TheSync.UsuarioLogado.Admin)
+                        {
+                            LogFileHelper.Get().Write($"String de Conexão: {connStr}", txtLog);
+                            LogFileHelper.Get().Write("\n", txtLog);
+                        }
+
                         using (SqlConnection sqlConn = new SqlConnection(connStr))
                         {
 
@@ -293,25 +308,32 @@ namespace EcoplusDoctorSync
                             }
                             catch (Exception ex)
                             {
-                                LogFileHelper.Get().Write($"Não foi possivel se conectar ao Servidor {conn.Apelido}: ({conn.GetStringDeConexao()}) devido a {ex.Message}", txtLog);
+                                LogFileHelper.Get().Write($"Não foi possivel se conectar ao Servidor {conn.Apelido}, devido a {ex.Message}", txtLog);
                                 LogFileHelper.Get().Write("\n", txtLog);
                                 bErrors = true;
                                 continue;
                             }
 
+                            //VERIFICA SE A ESTRUTURA DO BANCO DE DADOS ESTÁ CORRETA
                             bool bdColuna = DataBaseHelper.VerificaColuna(sqlConn);
 
-                            if (bdColuna) 
-                            { 
-                                if (MessageBox.Show($"O Banco de Dados {conn.Apelido} não está com as tabelas adequadas para que a inserção seja executada.\nDeseja fazer as alterações necessárias?", $"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (bdColuna && TheSync.UsuarioLogado.Admin)
+                            {
+                                if (MessageBox.Show($"O Banco de Dados do servidor {conn.Apelido} não está com as tabelas adequadas para que a inserção seja executada.\nDeseja fazer as alterações necessárias?", $"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                                 {
                                     DataBaseHelper.ReestruturacaoBD(sqlConn);
-
                                 }
-                                else 
+                                else
                                 {
                                     continue;
                                 }
+                            }
+                            else if (bdColuna)
+                            {
+                                MessageBox.Show($"O Banco de Dados do servidor {conn.Apelido} não está com as tabelas adequadas para que a inserção seja executada.\nContate a Tesi Brasil para executar essa ação. ", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                LogFileHelper.Get().Write($"O Banco de Dados do servidor {conn.Apelido} não está com as tabelas adequadas para que a inserção seja executada. Não foi possível prosseguir com a ação", txtLog);
+                                continue;
+
                             }
 
 
@@ -319,47 +341,70 @@ namespace EcoplusDoctorSync
 
                             using (SqlCommand cmd = new SqlCommand())
                             {
+                                //ETAPA 1 - VERIFICA SE USUÁRIO JÁ EXISTE NO BANCO DE DADOS
+                                LogFileHelper.Get().Write($"Etapa 1/12 - VERIFICA SE USUÁRIO JÁ EXISTE NO BANCO DE DADOS\n", txtLog);
+
                                 cmd.Connection = sqlConn;
                                 cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{medico.sUserName}' ORDER BY ID";
 
-#if DEBUG
-                                LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-                                LogFileHelper.Get().Write("\n", txtLog);
-#endif
+
+                                if (TheSync.UsuarioLogado.Admin)
+                                {
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    LogFileHelper.Get().Write("\n", txtLog);
+                                }
+
                                 object objTemp = cmd.ExecuteScalar();
 
                                 if (objTemp == null)
                                 {
 
-                                        //CRIA NOVO USUARIO
-                                        cmd.CommandText = $"INSERT INTO UTENTI (USERNAME,PASSWORD, ID_GRUPPO, DISABILITATO, SCADENZA_PASSWORD, DATA_PASSWORD, DATA_ULTIMO_UTILIZZO, PRIMO_LOGIN, TIPO_PASSWORD, ELIMINATO, OLD_ROWGUID) " +
-                                                          $"VALUES ('{medico.sUserName}',NULL, 22, 0, 0, '{DateTime.Now.ToString("yyyyMMddHHmmss")}', '{DateTime.Now.ToString("yyyyMMddHHmmss")}', 0, 0, 0, NEWID())";
-#if DEBUG
-                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    //ETAPA 2 - CRIA NOVO USUARIO
+                                    LogFileHelper.Get().Write($"Etapa 2/12 - CRIA NOVO USUARIO\n", txtLog);
 
-#endif
+
+                                    cmd.CommandText = $"INSERT INTO UTENTI (USERNAME,PASSWORD, ID_GRUPPO, DISABILITATO, SCADENZA_PASSWORD, DATA_PASSWORD, DATA_ULTIMO_UTILIZZO, PRIMO_LOGIN, TIPO_PASSWORD, ELIMINATO, OLD_ROWGUID) " +
+                                                          $"VALUES ('{medico.sUserName}',NULL, 22, 0, 0, '{DateTime.Now.ToString("yyyyMMddHHmmss")}', '{DateTime.Now.ToString("yyyyMMddHHmmss")}', 0, 0, 0, NEWID())";
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
                                     cmd.ExecuteNonQuery();
-                                    LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI CONCLUIDA\n", txtLog);
+                                    LogFileHelper.Get().Write("\nCRIACAO DE USUARIO CONCLUIDA\n", txtLog);
 
 
                                     //SELECIONA O ID DO USUARIO CRIADO
                                     cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{medico.sUserName}' ORDER BY ID";
-#if DEBUG
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
                                         LogFileHelper.Get().Write(cmd.CommandText, txtLog);
                                         LogFileHelper.Get().Write("\n", txtLog);
-#endif
+                                    }
+
                                     iIDUtente = Convert.ToInt64(cmd.ExecuteScalar());
 
-                                        //CRIA NOVA LINHA NA TABELA UTENTI_DETTAGLIO
-                                        cmd.CommandText = $"INSERT INTO utenti_dettaglio (idutente, cognome, nome, codfisc, codice, titolo, email, specialita, firma1, firma2, immaginefirma, worklist, fmf_id, fmf_nt, fmf_nt_scadenza, fmf_pe, fmf_pe_scadenza, ROWGUID)" +
-                                                          $"VALUES ({iIDUtente}, '{medico.sSobrenome}', '{medico.sNome}', {medico.sCRM}, '{medico.s3L3N}','{medico.sTratamento}', '', NULL, '{medico.sAssinatura}', NULL, '', NULL, NULL, 0, NULL, 0, NULL, NEWID())";
-#if DEBUG
-                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-                                        
-#endif
-                                    cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_DETTAGLIO CONCLUIDA\n", txtLog);
+                                    //ETAPA 3 - CRIA NOVA LINHA NA TABELA UTENTI_DETTAGLIO
+                                    LogFileHelper.Get().Write($"Etapa 3/12 - CRIANDO OS DETALHES DO USUARIO\n", txtLog);
 
+
+                                    cmd.CommandText = $"INSERT INTO utenti_dettaglio (idutente, cognome, nome, codfisc, codice, titolo, email, specialita, firma1, firma2, immaginefirma, worklist, fmf_id, fmf_nt, fmf_nt_scadenza, fmf_pe, fmf_pe_scadenza, ROWGUID)" +
+                                                          $"VALUES ({iIDUtente}, '{medico.sSobrenome}', '{medico.sNome}', {medico.sCRM}, '{medico.s3L3N}','{medico.sTratamento}', '', NULL, '{medico.sAssinatura}', NULL, '', NULL, NULL, 0, NULL, 0, NULL, NEWID())";
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
+                                    cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nINSERCAO DOS DETALHES DO USUARIO CONCLUIDA\n", txtLog);
+
+                                    LogFileHelper.Get().Write($"Etapa 4/12 - NAO NECESSARIA\n", txtLog);
+                                    LogFileHelper.Get().Write($"Etapa 5/12 - NAO NECESSARIA\n", txtLog);
+                                    LogFileHelper.Get().Write($"Etapa 6/12 - NAO NECESSARIA\n", txtLog);
+                                    LogFileHelper.Get().Write($"Etapa 7/12 - NAO NECESSARIA\n", txtLog);
 
                                 }
                                 else
@@ -372,76 +417,105 @@ namespace EcoplusDoctorSync
                                     }
 
 
+                                    //ETAPA 2 - SELECIONA O ID DO USUARIO EXISTENTE 
+                                    LogFileHelper.Get().Write($"Etapa 2/12 - SELECIONA O USUARIO EXISTENTE\n", txtLog);
 
-                                    //SELECIONA O ID DO USUARIO EXISTENTE 
                                     cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{medico.sUserName}' ORDER BY ID";
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-                                    LogFileHelper.Get().Write("\n", txtLog);
-#endif
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        LogFileHelper.Get().Write("\n", txtLog);
+                                    }
+
                                     iIDUtente = Convert.ToInt64(cmd.ExecuteScalar());
 
-                                    //ATUALIZA AS INFORMAÇÕS NA TABELA UTENTI_DETTAGLIO
+                                    LogFileHelper.Get().Write("USUARIO ENCONTRADO\n", txtLog);
+
+
+                                    //ETAPA 3 - ATUALIZA AS INFORMAÇÕS NA TABELA UTENTI_DETTAGLIO
+                                    LogFileHelper.Get().Write($"Etapa 3/12 - ATUALIZA OS DETALHES DO USUARIO\n", txtLog);
+
                                     cmd.CommandText = $"UPDATE utenti_dettaglio SET cognome = '{medico.sSobrenome}', nome = '{medico.sNome}', codfisc = {medico.sCRM} , codice = '{medico.s3L3N}' , titolo = '{medico.sTratamento}', firma1 = '{medico.sAssinatura}'" +
                                                       $"WHERE idutente = {iIDUtente}";
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-                                    
-#endif
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
                                     cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nATUALIZACAO DA TABELA UTENTI_DETTAGLIO CONCLUIDA\n", txtLog);
+                                    LogFileHelper.Get().Write("\nATUALIZACA ODOS DETALHES DO USUARIO CONCLUIDA\n", txtLog);
                                     //
 
 
-                                    //LIMPA OS REGISTROS DA TABELA UTENTI_ESAMI
+                                    //ETAPA 4 - LIMPA OS REGISTROS DA TABELA UTENTI_ESAMI
+                                    LogFileHelper.Get().Write($"Etapa 4/12 - APAGA CONFIGURAÇÕES DE EXAME DO USUARIO\n", txtLog);
 
                                     cmd.CommandText = $"DELETE FROM UTENTI_ESAMI " +
                                                       $"WHERE idutente = {iIDUtente}";
 
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);                                    
-#endif
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
                                     cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_ESAMI CONCLUIDA\n", txtLog);
+                                    LogFileHelper.Get().Write("\nDELETE DAS CONFIGURAÇÕES DE EXAME DO USUARIO CONCLUIDA\n", txtLog);
                                     //
 
-                                    //LIMPA OS REGISTROS NA TABELA UTENTI_INTERFACCIA
+                                    //ETAPA 5 - LIMPA OS REGISTROS NA TABELA UTENTI_INTERFACCIA
+                                    LogFileHelper.Get().Write($"Etapa 5/12 - APAGA CONFIGURAÇÕES DE INTERFACE DO USUARIO\n", txtLog);
 
                                     cmd.CommandText = $"DELETE FROM UTENTI_INTERFACCIA " +
                                                       $"WHERE idutente = {iIDUtente}";
 
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
-                                    cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_INTERFACCIA CONCLUIDA\n", txtLog);
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
 
-                                    //LIMPA OS REGISTROS NA TABELA UTENTI_SETTING
+                                    cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DAS CONFIGURAÇÕES DE INTERFACE DO USUARIO CONCLUIDA\n", txtLog);
+                                    //
+
+                                    //ETAPA 6 - LIMPA OS REGISTROS NA TABELA UTENTI_SETTING
+                                    LogFileHelper.Get().Write($"Etapa 6/12 - APAGA CONFIGURAÇÕES GERAIS DO USUARIO\n", txtLog);
 
                                     cmd.CommandText = $"DELETE FROM UTENTI_SETTING " +
                                                       $"WHERE idutente = {iIDUtente}";
 
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
-                                    cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_SETTING CONCLUIDO\n", txtLog);
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
 
-                                    //LIMPA OS REGISTROS NA TABELA REPORTX_UTENTI
+                                    cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DAS CONFIGURAÇÕES GERAIS DO USUARIO CONCLUIDO\n", txtLog);
+                                    //
+
+                                    //ETAPA 7 - LIMPA OS REGISTROS NA TABELA REPORTX_UTENTI
+                                    LogFileHelper.Get().Write($"Etapa 7/12 - APAGA CONFIGURAÇÕES DE LAUDO DO USUARIO\n", txtLog);
 
                                     cmd.CommandText = $"DELETE FROM REPORTEX_UTENTI " +
                                                       $"WHERE IDUTENTE = {iIDUtente}";
 
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
                                     cmd.ExecuteScalar();
-                                    LogFileHelper.Get().Write("\nDELETE DA TABELA REPORTX_UTENTI CONCLUIDO\n", txtLog);
+                                    LogFileHelper.Get().Write("\nDELETE DAS CONFIGURAÇÕES DE LAUDO DO USUARIO CONCLUIDO\n", txtLog);
+                                    //
                                 }
+                                
 
                                 // INSERÇÃO EM TABELAS SECUNDÁRIAS
 
-                                // INSERE NA TABELA UTENTI_ESAMI
+                                //ETAPA 8 -  INSERE NA TABELA UTENTI_ESAMI
+                                LogFileHelper.Get().Write($"Etapa 8/12 - INSERE CONFIGURAÇÕES DE EXAME DO USUARIO\n", txtLog);
+
                                 cmd.CommandText = $"INSERT INTO utenti_esami (idutente, numero, tipo, valore, ROWGUID) VALUES " +
                                                   $"({iIDUtente}, 1, 0, 0, NEWID())," +
                                                   $"({iIDUtente}, 1, 1, 0, NEWID())," +
@@ -459,14 +533,19 @@ namespace EcoplusDoctorSync
                                                   $"({iIDUtente}, 12, 3, 0, NEWID())," +
                                                   $"({iIDUtente}, 13, 3, 0, NEWID())";
 
-#if DEBUG
-                                LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
+                                if (TheSync.UsuarioLogado.Admin)
+                                {
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                }
+
                                 cmd.ExecuteScalar();
-                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_ESAMI CONCLUIDA\n", txtLog);
+                                LogFileHelper.Get().Write("\nINSERCAO DAS CONFIGURAÇÕES DE EXAME DO USUARIO CONCLUIDA\n", txtLog);
                                 //
 
-                                // INSERE NA TABELA UTENTI_INTERFACCIA
+                                //ETAPA 9 -  INSERE NA TABELA UTENTI_INTERFACCIA
+                                LogFileHelper.Get().Write($"Etapa 9/12 - INSERE CONFIGURAÇÕES DE INTERFACE DO USUARIO\n", txtLog);
+
+
                                 cmd.CommandText = $"INSERT INTO utenti_interfaccia (idutente, idcontrollo, visibile, x, y, lunghezza, altezza, ROWGUID) VALUES " +
                                                   $"({iIDUtente}, 1021, 1, 76, 47, 165, 26, NEWID())," +
                                                   $"({iIDUtente}, 1022, 1, 76, 17, 156, 26, NEWID())," +
@@ -513,14 +592,18 @@ namespace EcoplusDoctorSync
                                                   $"({iIDUtente}, 1204, 0, 118, 341, 144, 26, NEWID())," +
                                                   $"({iIDUtente}, 1205, 0, 532, 47, 105, 26, NEWID())";
 
-#if DEBUG
-                                LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
+                                if (TheSync.UsuarioLogado.Admin)
+                                {
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                }
+
                                 cmd.ExecuteScalar();
-                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_INTERFACCIA CONCLUIDA\n", txtLog);
+                                LogFileHelper.Get().Write("\nINSERCAO DAS CONFIGURAÇÕES DE INTERFACE DO USUARIO CONCLUIDA\n", txtLog);
                                 //
 
-                                // INSERE NA TABELA UTENTI_SETTING
+                                //ETAPA 10 -  INSERE NA TABELA UTENTI_SETTING
+                                LogFileHelper.Get().Write($"Etapa 6/12 - INSERE CONFIGURAÇÕES GERAIS DO USUARIO\n", txtLog);
+
 
                                 cmd.CommandText = $"INSERT INTO utenti_setting (idutente, chiave, valore, ROWGUID) VALUES " +
                                                   $"({iIDUtente}, 'AddNewExamAfterPatientIns', '1', NEWID())," +
@@ -560,13 +643,18 @@ namespace EcoplusDoctorSync
                                                   $"({iIDUtente}, 'ViewImageReport', '1', NEWID())," +
                                                   $"({iIDUtente}, 'ViewToolbars', '1', NEWID())";
 
-#if DEBUG
-                                LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
-                                cmd.ExecuteScalar();
-                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_SETTING CONCLUIDA\n", txtLog);
+                                if (TheSync.UsuarioLogado.Admin)
+                                {
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                }
 
-                                //ADICIONA O USUARIO AO REPORTEX
+                                cmd.ExecuteScalar();
+                                LogFileHelper.Get().Write("\nINSERCAO DAS CONFIGURAÇÕES GERAIS DO USUARIO CONCLUIDA\n", txtLog);
+
+                                //ETAPA 11 - ADICIONA O USUARIO AO REPORTEX
+                                LogFileHelper.Get().Write($"Etapa 11/12 - INSERE CONFIGURAÇÕES DE LAUDO DO USUARIO\n", txtLog);
+
+
                                 cmd.CommandText = $"SELECT ID FROM REPORTEX WHERE ELIMINATO = 0";
 
                                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -575,17 +663,22 @@ namespace EcoplusDoctorSync
                                     {
                                         cmd.CommandText = $"INSERT INTO REPORTEX_UTENTI (IDREPORTEX, IDUTENTE) VALUES ({reader.GetInt32(0)}, {iIDUtente}) {Environment.NewLine}";
                                     }
-#if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
+
+                                    if (TheSync.UsuarioLogado.Admin)
+                                    {
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    }
+
                                     reader.Close();
                                 };
 
                                 cmd.ExecuteNonQuery();
-                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA REPORTEX_UTENTI CONCLUIDA\n", txtLog);
+                                LogFileHelper.Get().Write("\nINSERCAO DAS CONFIGURAÇÕES DE LAUDO DO USUARIO CONCLUIDA\n", txtLog);
 
 
-                                // ATUALIZAÇÃO DA RUBRICA
+                                //ETAPA 12 -  ATUALIZAÇÃO DA RUBRICA
+                                LogFileHelper.Get().Write($"Etapa 12/12 - ATUALIZA RUBRICA DO USUARIO\n", txtLog);
+
                                 if (!string.IsNullOrEmpty(medico.sRubricaB64.Trim()))
                                 {
                                     string imagePath = medico.sRubricaB64;
@@ -606,9 +699,10 @@ namespace EcoplusDoctorSync
                                                           $"'{medico.sRubricaB64}'" +
                                                           $"WHERE idutente = {iIDUtente}";
 
-#if DEBUG
-                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
-#endif
+                                        if (TheSync.UsuarioLogado.Admin)
+                                        {
+                                            LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        }
                                         cmd.ExecuteScalar();
                                         LogFileHelper.Get().Write("\nATUALIZACAO DA RUBRICA CONCLUIDA\n", txtLog);
 
@@ -620,10 +714,11 @@ namespace EcoplusDoctorSync
                                         // Caso em que o arquivo de imagem não exista
 
                                         string mensagem = "Arquivo de imagem não encontrado: " + imagePath;
-#if DEBUG
-                                        LogFileHelper.Get().Write(mensagem, txtLog);
-                                        LogFileHelper.Get().Write("\n", txtLog);
-#endif
+                                        if (TheSync.UsuarioLogado.Admin)
+                                        {
+                                            LogFileHelper.Get().Write(mensagem, txtLog);
+                                            LogFileHelper.Get().Write("\n", txtLog);
+                                        }
 
                                     }
 

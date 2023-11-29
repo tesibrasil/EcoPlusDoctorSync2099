@@ -13,8 +13,8 @@ namespace EcoplusDoctorSync.Helpers
         {
             List<Usuario> usuarios = new List<Usuario>();
 
-            Usuario adm = new Usuario { Id = 1, UserName = "tesiadmin", Password = "nautilus" };
-            Usuario fleury = new Usuario { Id = 1, UserName = "fleury", Password = "tp4859" };
+            Usuario adm = new Usuario { Id = 1, UserName = "tesiadmin", Password = "nautilus", Admin = true };
+            Usuario fleury = new Usuario { Id = 1, UserName = "fleury", Password = "tp4859", Admin = false};
 
             usuarios.Add(adm);
             usuarios.Add(fleury);
