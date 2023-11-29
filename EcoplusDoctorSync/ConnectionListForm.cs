@@ -68,5 +68,25 @@ namespace EcoplusDoctorSync
         {
             this.Close();
         }
+
+        private void cbMarcarTodos_CheckedChanged(object sender, EventArgs e)
+        {
+            if(cbMarcarTodos.Checked)
+            {
+                for (int i = 0; i < clbConexoes.Items.Count; i++)
+                {
+                    clbConexoes.SetItemChecked(i, true);
+
+                }
+            }
+            else 
+            {
+                for (int i = 0; i < clbConexoes.Items.Count; i++)
+                {
+                    clbConexoes.SetItemChecked(i, false);
+
+                }
+            }
+        }
     }
 }

@@ -19,14 +19,20 @@ namespace EcoplusDoctorSync
         public ConectionForm()
         {
             InitializeComponent();
+        }
 
+        public Root connectionsList;
+
+        private void ConnectionForm_Load(object sender, EventArgs e) 
+        {
+            this.gbManual.Enabled = true;
+            this.gbImportar.Enabled = false;
+            this.ckbManual.Checked = true;
+            this.ckbManual.Enabled = false;
             connectionsList = new Root();
             connectionsList.Conexoes = new List<Conexao>();
             LoadJson();
-
         }
-
-        public Root connectionsList; 
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {

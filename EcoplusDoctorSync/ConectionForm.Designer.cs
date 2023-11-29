@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConectionForm));
             this.ckbManual = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbManual = new System.Windows.Forms.GroupBox();
             this.lblStringConexao = new System.Windows.Forms.Label();
             this.txtStringConexao = new System.Windows.Forms.TextBox();
             this.lblBandoDeDados = new System.Windows.Forms.Label();
@@ -46,14 +46,14 @@
             this.btnSalva = new System.Windows.Forms.Button();
             this.btnFechar = new System.Windows.Forms.Button();
             this.btnExcluir = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbImportar = new System.Windows.Forms.GroupBox();
             this.btnFindXLS = new System.Windows.Forms.Button();
             this.txtExcelPath = new System.Windows.Forms.TextBox();
             this.lvConexoes = new System.Windows.Forms.ListView();
             this.Apelido = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.StringDeConexão = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.gbManual.SuspendLayout();
+            this.gbImportar.SuspendLayout();
             this.SuspendLayout();
             // 
             // ckbManual
@@ -65,26 +65,26 @@
             this.ckbManual.TabIndex = 26;
             this.ckbManual.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // gbManual
             // 
-            this.groupBox1.Controls.Add(this.lblStringConexao);
-            this.groupBox1.Controls.Add(this.txtStringConexao);
-            this.groupBox1.Controls.Add(this.lblBandoDeDados);
-            this.groupBox1.Controls.Add(this.txtBancoDeDados);
-            this.groupBox1.Controls.Add(this.lblApelido);
-            this.groupBox1.Controls.Add(this.txtApelido);
-            this.groupBox1.Controls.Add(this.lblServidor);
-            this.groupBox1.Controls.Add(this.txtServidor);
-            this.groupBox1.Controls.Add(this.lblUsuario);
-            this.groupBox1.Controls.Add(this.txtUsuario);
-            this.groupBox1.Controls.Add(this.lblSenha);
-            this.groupBox1.Controls.Add(this.txtSenha);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(399, 399);
-            this.groupBox1.TabIndex = 25;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Inserção Manual";
+            this.gbManual.Controls.Add(this.lblStringConexao);
+            this.gbManual.Controls.Add(this.txtStringConexao);
+            this.gbManual.Controls.Add(this.lblBandoDeDados);
+            this.gbManual.Controls.Add(this.txtBancoDeDados);
+            this.gbManual.Controls.Add(this.lblApelido);
+            this.gbManual.Controls.Add(this.txtApelido);
+            this.gbManual.Controls.Add(this.lblServidor);
+            this.gbManual.Controls.Add(this.txtServidor);
+            this.gbManual.Controls.Add(this.lblUsuario);
+            this.gbManual.Controls.Add(this.txtUsuario);
+            this.gbManual.Controls.Add(this.lblSenha);
+            this.gbManual.Controls.Add(this.txtSenha);
+            this.gbManual.Location = new System.Drawing.Point(12, 12);
+            this.gbManual.Name = "gbManual";
+            this.gbManual.Size = new System.Drawing.Size(399, 399);
+            this.gbManual.TabIndex = 25;
+            this.gbManual.TabStop = false;
+            this.gbManual.Text = "Inserção Manual";
             // 
             // lblStringConexao
             // 
@@ -122,7 +122,7 @@
             this.txtBancoDeDados.Location = new System.Drawing.Point(6, 158);
             this.txtBancoDeDados.Name = "txtBancoDeDados";
             this.txtBancoDeDados.Size = new System.Drawing.Size(387, 20);
-            this.txtBancoDeDados.TabIndex = 9;
+            this.txtBancoDeDados.TabIndex = 3;
             this.txtBancoDeDados.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblApelido
@@ -162,7 +162,7 @@
             this.txtServidor.Location = new System.Drawing.Point(6, 101);
             this.txtServidor.Name = "txtServidor";
             this.txtServidor.Size = new System.Drawing.Size(387, 20);
-            this.txtServidor.TabIndex = 3;
+            this.txtServidor.TabIndex = 2;
             this.txtServidor.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblUsuario
@@ -182,7 +182,7 @@
             this.txtUsuario.Location = new System.Drawing.Point(6, 221);
             this.txtUsuario.Name = "txtUsuario";
             this.txtUsuario.Size = new System.Drawing.Size(387, 20);
-            this.txtUsuario.TabIndex = 5;
+            this.txtUsuario.TabIndex = 4;
             this.txtUsuario.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblSenha
@@ -201,7 +201,7 @@
             this.txtSenha.Location = new System.Drawing.Point(6, 282);
             this.txtSenha.Name = "txtSenha";
             this.txtSenha.Size = new System.Drawing.Size(387, 20);
-            this.txtSenha.TabIndex = 7;
+            this.txtSenha.TabIndex = 5;
             this.txtSenha.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnSalva
@@ -211,7 +211,7 @@
             this.btnSalva.Location = new System.Drawing.Point(417, 18);
             this.btnSalva.Name = "btnSalva";
             this.btnSalva.Size = new System.Drawing.Size(131, 30);
-            this.btnSalva.TabIndex = 30;
+            this.btnSalva.TabIndex = 6;
             this.btnSalva.Text = "SALVAR";
             this.btnSalva.UseVisualStyleBackColor = true;
             this.btnSalva.Click += new System.EventHandler(this.btnSalvar_Click);
@@ -241,16 +241,16 @@
             this.btnExcluir.UseVisualStyleBackColor = true;
             this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
             // 
-            // groupBox2
+            // gbImportar
             // 
-            this.groupBox2.Controls.Add(this.btnFindXLS);
-            this.groupBox2.Controls.Add(this.txtExcelPath);
-            this.groupBox2.Location = new System.Drawing.Point(12, 421);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(399, 121);
-            this.groupBox2.TabIndex = 31;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Inserir Grupo";
+            this.gbImportar.Controls.Add(this.btnFindXLS);
+            this.gbImportar.Controls.Add(this.txtExcelPath);
+            this.gbImportar.Location = new System.Drawing.Point(12, 421);
+            this.gbImportar.Name = "gbImportar";
+            this.gbImportar.Size = new System.Drawing.Size(399, 121);
+            this.gbImportar.TabIndex = 31;
+            this.gbImportar.TabStop = false;
+            this.gbImportar.Text = "Inserir Grupo";
             // 
             // btnFindXLS
             // 
@@ -304,21 +304,22 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 559);
             this.Controls.Add(this.lvConexoes);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.gbImportar);
             this.Controls.Add(this.btnSalva);
             this.Controls.Add(this.btnFechar);
             this.Controls.Add(this.btnExcluir);
             this.Controls.Add(this.ckbManual);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbManual);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConectionForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Eco+ DoctorSync 2099 - Conexões";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.Load += new System.EventHandler(this.ConnectionForm_Load);
+            this.gbManual.ResumeLayout(false);
+            this.gbManual.PerformLayout();
+            this.gbImportar.ResumeLayout(false);
+            this.gbImportar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -327,7 +328,7 @@
         #endregion
 
         private System.Windows.Forms.CheckBox ckbManual;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbManual;
         private System.Windows.Forms.Label lblBandoDeDados;
         private System.Windows.Forms.TextBox txtBancoDeDados;
         private System.Windows.Forms.Label lblApelido;
@@ -343,7 +344,7 @@
         private System.Windows.Forms.Button btnSalva;
         private System.Windows.Forms.Button btnFechar;
         private System.Windows.Forms.Button btnExcluir;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbImportar;
         private System.Windows.Forms.Button btnFindXLS;
         private System.Windows.Forms.TextBox txtExcelPath;
         private System.Windows.Forms.ListView lvConexoes;

@@ -74,6 +74,11 @@ namespace EcoplusDoctorSync
             if (atualUsuario != null)
             {
                 TheSync.UsuarioLogado = new Usuario { Id = atualUsuario.Id, UserName = atualUsuario.UserName };
+                TheSync.ObterNomeDoUsuarioWin();
+                TheSync.ObterNomeDaMaquina();
+                TheSync.ObterVersaoDoSistema();
+
+
                 this.Hide();
                 MainForm fomulario = new MainForm();
                 fomulario.ShowDialog();

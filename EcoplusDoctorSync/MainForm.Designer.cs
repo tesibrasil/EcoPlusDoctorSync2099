@@ -153,7 +153,6 @@ namespace EcoplusDoctorSync
             this.txtCRM.TabIndex = 13;
             this.txtCRM.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtCRM.Leave += new System.EventHandler(this.CamposAssinatura_EventLeave);
-            this.txtCRM.KeyPress += txtCRM_KeyPress;
             // 
             // lblTratamento
             // 
@@ -168,6 +167,7 @@ namespace EcoplusDoctorSync
             // txtTratamento
             // 
             this.txtTratamento.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTratamento.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtTratamento.Location = new System.Drawing.Point(6, 263);
             this.txtTratamento.Name = "txtTratamento";
             this.txtTratamento.Size = new System.Drawing.Size(207, 26);

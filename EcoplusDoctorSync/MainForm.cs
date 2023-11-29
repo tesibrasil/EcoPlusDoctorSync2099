@@ -25,12 +25,20 @@ namespace EcoplusDoctorSync
         {
             ckbManual.Checked = true;
             ckbManual.Checked = false;
-            LogFileHelper.Get().Write($"Usuário Logado: {TheSync.UsuarioLogado.UserName}", txtLog);
+
+            LogFileHelper.Get().Write($"=================================================", txtLog);
+            LogFileHelper.Get().Write($"Aplicação Eco+ DoctorSync 2099 Iniciada: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", txtLog);
+            LogFileHelper.Get().Write($"Versão da Aplicação: {TheSync.Versao}", txtLog);
+            LogFileHelper.Get().Write($"Estação Logada: {TheSync.Estacao}", txtLog);
+            LogFileHelper.Get().Write($"Usuário do Windows Logado: {TheSync.UsuarioWindows}", txtLog);
+            LogFileHelper.Get().Write($"Usuário Sync Logado: {TheSync.UsuarioLogado.UserName}", txtLog);
+            LogFileHelper.Get().Write($"=================================================", txtLog);
+            LogFileHelper.Get().Write($"\n", txtLog);
 #if DEBUG
-            txtUsername.Text = "Tesi.COM.BR\\MEDICO";
+            txtUsername.Text = "FLEURY.COM.BR\\MEDICO";
             txtSobrenome.Text = "CIRURGIAO";
             txtNome.Text = "MEDICO";
-            txt3l3n.Text = "987654";
+            txt3l3n.Text = "ZYX654";
             txtTratamento.Text = "Dr.";
             txtCRM.Text = "123456";
             txtAssinatura.Text = "Dr. MEDICO CIRURGIAO - CRM: 123456";
@@ -133,7 +141,7 @@ namespace EcoplusDoctorSync
 
             picBoxRubrica.ImageLocation = txtImagePath.Text;
             picBoxRubrica.Load();
-
+            
         }
 
         private void ckbManual_CheckedChanged(object sender, EventArgs e)
@@ -199,7 +207,7 @@ namespace EcoplusDoctorSync
 
             selectedConnetions = formConexao.selectedConnetions;
 
-            if(selectedConnetions.Conexoes == null || selectedConnetions.Conexoes.Count == 0) 
+            if(selectedConnetions == null || selectedConnetions.Conexoes.Count == 0) 
             {
                 MessageBox.Show("Nenhuma conexão foi selecionada.\nInicie o processo novamente ou configure novas conexões", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -214,6 +222,7 @@ namespace EcoplusDoctorSync
                 medico.sUserName = txtUsername.Text.Trim();
                 medico.sNome = txtNome.Text.Trim();
                 medico.sSobrenome = txtSobrenome.Text.Trim();
+                medico.s3L3N = txt3l3n.Text.Trim();
                 medico.sTratamento = txtTratamento.Text.Trim();
                 medico.sCRM = txtCRM.Text.Trim();
                 medico.sAssinatura = txtAssinatura.Text.Trim();
@@ -240,14 +249,14 @@ namespace EcoplusDoctorSync
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
             ckbManual.Enabled = false;
-            txtLog.Text = "";
+            LogFileHelper.Get().Write("\n", txtLog); 
 
             try
             {
                 foreach (var medico in listaMedicosX)
                 {
 
-                    LogFileHelper.Get().Write("INICIO", txtLog);
+                    LogFileHelper.Get().Write("INICIO     --> " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), txtLog);
                     LogFileHelper.Get().Write("USERNAME   --> " + medico.sUserName, txtLog);
                     LogFileHelper.Get().Write("SOBRENOME  --> " + medico.sSobrenome, txtLog);
                     LogFileHelper.Get().Write("NOME       --> " + medico.sNome, txtLog);
@@ -256,6 +265,8 @@ namespace EcoplusDoctorSync
                     LogFileHelper.Get().Write("ASSINATURA --> " + medico.sAssinatura, txtLog);
                     LogFileHelper.Get().Write("3L3N       --> " + medico.s3L3N, txtLog);
                     LogFileHelper.Get().Write("RUBRICA    --> " + medico.sRubricaB64, txtLog);
+
+                    LogFileHelper.Get().Write("\n", txtLog);
 
 
                     foreach (var conn in selectedConnetions.Conexoes)
@@ -268,11 +279,12 @@ namespace EcoplusDoctorSync
 
 #if DEBUG
                         LogFileHelper.Get().Write(connStr, txtLog);
+                        LogFileHelper.Get().Write("\n", txtLog);
 #endif
                         using (SqlConnection sqlConn = new SqlConnection(connStr))
                         {
 
-                            LogFileHelper.Get().Write($"   Servidor ({conn.Apelido})", txtLog);
+                            LogFileHelper.Get().Write($"Servidor: {conn.Apelido}", txtLog);
 
                             try
                             {
@@ -280,7 +292,8 @@ namespace EcoplusDoctorSync
                             }
                             catch (Exception ex)
                             {
-                                LogFileHelper.Get().Write($"      Não foi possivel se conectar ao Servidor {conn.Apelido} devido a {ex.Message}", txtLog);
+                                LogFileHelper.Get().Write($"Não foi possivel se conectar ao Servidor {conn.Apelido}: ({conn.GetStringDeConexao()}) devido a {ex.Message}", txtLog);
+                                LogFileHelper.Get().Write("\n", txtLog);
                                 bErrors = true;
                                 continue;
                             }
@@ -294,35 +307,41 @@ namespace EcoplusDoctorSync
 
 #if DEBUG
                                 LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                LogFileHelper.Get().Write("\n", txtLog);
 #endif
                                 object objTemp = cmd.ExecuteScalar();
 
                                 if (objTemp == null)
                                 {
-                                    //CRIA NOVO USUARIO
-                                    cmd.CommandText = $"INSERT INTO UTENTI (USERNAME,PASSOWORD, ID_GRUPPO, DISABILITATO, SCADENZA_PASSWORD, DATA_PASSWORD, DATA_ULTIMO_UTILIZZO, PRIMO_LOGIN, TIPO_PASSWORD, ELIMINATO, OLD_ROWGUID) " +
-                                                      $"VALUES ('{medico.sUserName}',NULL, 22, 0, 0, '{DateTime.Now.ToString("yyyyMMddHHmmss")}', '{DateTime.Now.ToString("yyyyMMddHHmmss")}', 0, 0, 0, NEWID())";
+
+                                        //CRIA NOVO USUARIO
+                                        cmd.CommandText = $"INSERT INTO UTENTI (USERNAME,PASSWORD, ID_GRUPPO, DISABILITATO, SCADENZA_PASSWORD, DATA_PASSWORD, DATA_ULTIMO_UTILIZZO, PRIMO_LOGIN, TIPO_PASSWORD, ELIMINATO, OLD_ROWGUID) " +
+                                                          $"VALUES ('{medico.sUserName}',NULL, 22, 0, 0, '{DateTime.Now.ToString("yyyyMMddHHmmss")}', '{DateTime.Now.ToString("yyyyMMddHHmmss")}', 0, 0, 0, NEWID())";
 #if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+
 #endif
                                     cmd.ExecuteNonQuery();
+                                    LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI CONCLUIDA\n", txtLog);
 
 
                                     //SELECIONA O ID DO USUARIO CRIADO
                                     cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{medico.sUserName}' ORDER BY ID";
 #if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        LogFileHelper.Get().Write("\n", txtLog);
 #endif
                                     iIDUtente = Convert.ToInt64(cmd.ExecuteScalar());
 
-                                    //CRIA NOVA LINHA NA TABELA UTENTI_DETTAGLIO
-                                    cmd.CommandText = $"INSERT INTO utenti_dettaglio (idutente, cognome, nome, codfisc, codice, titolo, email, specialita, firma1, firma2, immaginefirma, worklist, fmf_id, fmf_nt, fmf_nt_scadenza, fmf_pe, fmf_pe_scadenza, ROWGUID)" +
-                                                      $"VALUES ({iIDUtente}, {medico.sSobrenome}, {medico.sNome}, {medico.sCRM}, {medico.s3L3N}, '{medico.sTratamento}', '', NULL, {medico.sAssinatura}, NULL, '', NULL, NULL, 0, NULL, 0, NULL, NEWID())";
+                                        //CRIA NOVA LINHA NA TABELA UTENTI_DETTAGLIO
+                                        cmd.CommandText = $"INSERT INTO utenti_dettaglio (idutente, cognome, nome, codfisc, codice, titolo, email, specialita, firma1, firma2, immaginefirma, worklist, fmf_id, fmf_nt, fmf_nt_scadenza, fmf_pe, fmf_pe_scadenza, ROWGUID)" +
+                                                          $"VALUES ({iIDUtente}, '{medico.sSobrenome}', '{medico.sNome}', {medico.sCRM}, '{medico.s3L3N}','{medico.sTratamento}', '', NULL, '{medico.sAssinatura}', NULL, '', NULL, NULL, 0, NULL, 0, NULL, NEWID())";
 #if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                        
 #endif
                                     cmd.ExecuteScalar();
-                                    //
+                                    LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_DETTAGLIO CONCLUIDA\n", txtLog);
 
 
                                 }
@@ -330,7 +349,7 @@ namespace EcoplusDoctorSync
                                 {
                                     //Fazer update e delete e insert de todas as infos
 
-                                    if (MessageBox.Show($"O médico com o username {medico.sUserName} já existe no banco de dados?", $"Deseja sobrescrever as informações?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                                    if (MessageBox.Show($"O médico com o username {medico.sUserName} já existe no banco de dados.\nDeseja sobrescrever as informações?", $"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                                     {
                                         continue;
                                     }
@@ -338,53 +357,69 @@ namespace EcoplusDoctorSync
 
 
                                     //SELECIONA O ID DO USUARIO EXISTENTE 
-                                    cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{txtUsername.Text}' ORDER BY ID";
+                                    cmd.CommandText = $"SELECT ID FROM UTENTI WHERE USERNAME='{medico.sUserName}' ORDER BY ID";
 #if DEBUG
                                     LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    LogFileHelper.Get().Write("\n", txtLog);
 #endif
                                     iIDUtente = Convert.ToInt64(cmd.ExecuteScalar());
 
                                     //ATUALIZA AS INFORMAÇÕS NA TABELA UTENTI_DETTAGLIO
-                                    cmd.CommandText = $"UPDATE utenti_dettaglio SET cognome, nome, codfisc, codice, titolo, firma1" +
-                                                      $"VALUES ('{medico.sSobrenome}', '{medico.sNome}', {medico.sCRM}, '{medico.s3L3N}', '{medico.sTratamento}', '{medico.sAssinatura}')" +
+                                    cmd.CommandText = $"UPDATE utenti_dettaglio SET cognome = '{medico.sSobrenome}', nome = '{medico.sNome}', codfisc = {medico.sCRM} , codice = '{medico.s3L3N}' , titolo = '{medico.sTratamento}', firma1 = '{medico.sAssinatura}'" +
                                                       $"WHERE idutente = {iIDUtente}";
 #if DEBUG
                                     LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    
 #endif
                                     cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nATUALIZACAO DA TABELA UTENTI_DETTAGLIO CONCLUIDA\n", txtLog);
                                     //
 
 
                                     //LIMPA OS REGISTROS DA TABELA UTENTI_ESAMI
 
-                                    cmd.CommandText = $"DELETE FROM UTENTI_ESAMI" +
+                                    cmd.CommandText = $"DELETE FROM UTENTI_ESAMI " +
                                                       $"WHERE idutente = {iIDUtente}";
 
 #if DEBUG
-                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);                                    
 #endif
                                     cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_ESAMI CONCLUIDA\n", txtLog);
                                     //
 
                                     //LIMPA OS REGISTROS NA TABELA UTENTI_INTERFACCIA
 
-                                    cmd.CommandText = $"DELETE FROM UTENTI_INTERFACCIA" +
+                                    cmd.CommandText = $"DELETE FROM UTENTI_INTERFACCIA " +
                                                       $"WHERE idutente = {iIDUtente}";
 
 #if DEBUG
                                     LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                     cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_INTERFACCIA CONCLUIDA\n", txtLog);
 
                                     //LIMPA OS REGISTROS NA TABELA UTENTI_SETTING
 
-                                    cmd.CommandText = $"DELETE FROM UTENTI_SETTING" +
+                                    cmd.CommandText = $"DELETE FROM UTENTI_SETTING " +
                                                       $"WHERE idutente = {iIDUtente}";
 
 #if DEBUG
                                     LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                     cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DA TABELA UTENTI_SETTING CONCLUIDO\n", txtLog);
+
+                                    //LIMPA OS REGISTROS NA TABELA REPORTX_UTENTI
+
+                                    cmd.CommandText = $"DELETE FROM REPORTEX_UTENTI " +
+                                                      $"WHERE IDUTENTE = {iIDUtente}";
+
+#if DEBUG
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+#endif
+                                    cmd.ExecuteScalar();
+                                    LogFileHelper.Get().Write("\nDELETE DA TABELA REPORTX_UTENTI CONCLUIDO\n", txtLog);
                                 }
 
                                 // INSERÇÃO EM TABELAS SECUNDÁRIAS
@@ -411,6 +446,7 @@ namespace EcoplusDoctorSync
                                 LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                 cmd.ExecuteScalar();
+                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_ESAMI CONCLUIDA\n", txtLog);
                                 //
 
                                 // INSERE NA TABELA UTENTI_INTERFACCIA
@@ -464,6 +500,7 @@ namespace EcoplusDoctorSync
                                 LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                 cmd.ExecuteScalar();
+                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_INTERFACCIA CONCLUIDA\n", txtLog);
                                 //
 
                                 // INSERE NA TABELA UTENTI_SETTING
@@ -476,7 +513,7 @@ namespace EcoplusDoctorSync
                                                   $"({iIDUtente}, 'DefaultExam', '2', NEWID())," +
                                                   $"({iIDUtente}, 'DefaultPatientSex', '1', NEWID())," +
                                                   $"({iIDUtente}, 'DisableWarningMessageBox', '0', NEWID())," +
-                                                  $"({iIDUtente}, 'DoctorDefaultName', @TRATAMENTO + ' ' + @NOME + ' ' + @SOBRENOME + ' - CRM: ' + CONVERT(VARCHAR(10), @CRM), NEWID())," +
+                                                  $"({iIDUtente}, 'DoctorDefaultName','{medico.sAssinatura}', NEWID())," +
                                                   $"({iIDUtente}, 'EnableModifyAfterExamIns', '1', NEWID())," +
                                                   $"({iIDUtente}, 'FocusGridItemNotes', '0', NEWID())," +
                                                   $"({iIDUtente}, 'FontBold', '0', NEWID())," +
@@ -510,8 +547,29 @@ namespace EcoplusDoctorSync
                                 LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                 cmd.ExecuteScalar();
+                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA UTENTI_SETTING CONCLUIDA\n", txtLog);
 
-                                if (string.IsNullOrEmpty(medico.sRubricaB64.Trim()))
+                                //ADICIONA O USUARIO AO REPORTEX
+                                cmd.CommandText = $"SELECT ID FROM REPORTEX WHERE ELIMINATO = 0";
+
+                                using (SqlDataReader reader = cmd.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        cmd.CommandText = $"INSERT INTO REPORTEX_UTENTI (IDREPORTEX, IDUTENTE) VALUES ({reader.GetInt32(0)}, {iIDUtente}) {Environment.NewLine}";
+                                    }
+#if DEBUG
+                                    LogFileHelper.Get().Write(cmd.CommandText, txtLog);
+#endif
+                                    reader.Close();
+                                };
+
+                                cmd.ExecuteNonQuery();
+                                LogFileHelper.Get().Write("\nINSERCAO DA TABELA REPORTEX_UTENTI CONCLUIDA\n", txtLog);
+
+
+                                // ATUALIZAÇÃO DA RUBRICA
+                                if (!string.IsNullOrEmpty(medico.sRubricaB64.Trim()))
                                 {
                                     string imagePath = medico.sRubricaB64;
 
@@ -527,14 +585,16 @@ namespace EcoplusDoctorSync
 
                                         medico.sRubricaB64 = base64String;
 
-                                        cmd.CommandText = $"UPDATE utenti_dettaglio SET immaginefirma" +
-                                                          $"VALUES ('{medico.sRubricaB64}')" +
+                                        cmd.CommandText = $"UPDATE utenti_dettaglio SET immaginefirma = " +
+                                                          $"'{medico.sRubricaB64}'" +
                                                           $"WHERE idutente = {iIDUtente}";
 
 #if DEBUG
                                         LogFileHelper.Get().Write(cmd.CommandText, txtLog);
 #endif
                                         cmd.ExecuteScalar();
+                                        LogFileHelper.Get().Write("\nATUALIZACAO DA RUBRICA CONCLUIDA\n", txtLog);
+
                                         //
 
                                     }
@@ -545,6 +605,7 @@ namespace EcoplusDoctorSync
                                         string mensagem = "Arquivo de imagem não encontrado: " + imagePath;
 #if DEBUG
                                         LogFileHelper.Get().Write(mensagem, txtLog);
+                                        LogFileHelper.Get().Write("\n", txtLog);
 #endif
 
                                     }
@@ -561,24 +622,54 @@ namespace EcoplusDoctorSync
                     {
                         LogFileHelper.Get().Write(txtAssinatura.Text + " CONCLUIDO COM ERROS", txtLog);
                         MessageBox.Show(txtAssinatura.Text + " Concluido com ERROS!", "CONCLUIDO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        LogFileHelper.Get().Write("\n", txtLog);
                     }
                     else
                     {
                         LogFileHelper.Get().Write(txtAssinatura.Text + " CONCLUIDO COM SUCESSO", txtLog);
+                        LogFileHelper.Get().Write("\n", txtLog);
                     }
 
-                    txtUsername.Text = "";
-                    txtSobrenome.Text = "";
-                    txtNome.Text = "";
-                    txtAssinatura.Text = "";
-
-                    LogFileHelper.Get().Write("", txtLog);
                 }
+
+                txtUsername.Text = "";
+                txtSobrenome.Text = "";
+                txtNome.Text = "";
+                txt3l3n.Text = "";
+                txtTratamento.Text = "";
+                txtAssinatura.Text = "";
+                txtCRM.Text = "";
+                picBoxRubrica.ImageLocation = "";
+                txtImagePath.Text = "";
+                picBoxRubrica.Dispose();
+                txtExcelPath.Text = "";
+
+                LogFileHelper.Get().Write("\n", txtLog);
+
+                Cursor.Current = Cursors.Default;
+                btnFechar.Enabled = true;
+                btnInicializar.Enabled = true;
+                groupBox1.Enabled = false;
+                groupBox2.Enabled = true;
+                ckbManual.Enabled = true;
+                ckbManual.Checked = false;
+                LogFileHelper.Get().Write("\n", txtLog);
             }
             catch (Exception er)
             {
                 LogFileHelper.Get().Write(er.ToString(), txtLog);
+                LogFileHelper.Get().Write("\n", txtLog);
                 LogFileHelper.Get().Write(er.StackTrace, txtLog);
+                LogFileHelper.Get().Write("\n", txtLog);
+
+                Cursor.Current = Cursors.Default;
+                btnFechar.Enabled = true;
+                btnInicializar.Enabled = true;
+                groupBox1.Enabled = false;
+                groupBox2.Enabled = true;
+                ckbManual.Enabled = true;
+                ckbManual.Checked = false;
+                LogFileHelper.Get().Write("\n", txtLog);
             }
 
 
@@ -656,6 +747,8 @@ namespace EcoplusDoctorSync
 
             return listaMedicos;
         }
+
+
 
     }
 }

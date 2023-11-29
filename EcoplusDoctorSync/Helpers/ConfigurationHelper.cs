@@ -61,22 +61,8 @@ namespace EcoplusDoctorSync.Helpers
             }
             catch (Exception ex)
             {
-                //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
+                
             }
-
-
-
-
-            //            try
-            //            {
-            //                string json = JsonConvert.SerializeObject(root, Formatting.Indented);
-            //                File.WriteAllText(m_sCfgFilePath, json);
-            ////                Console.WriteLine("Arquivo JSON salvo com sucesso!");
-            //            }
-            //            catch (Exception ex)
-            //            {
-            // //               Console.WriteLine($"Ocorreu um erro ao salvar o arquivo JSON: {ex.Message}");
-            //            }
         }
     }
 }
