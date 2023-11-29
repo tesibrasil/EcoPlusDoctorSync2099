@@ -1,4 +1,5 @@
-﻿using EcoplusDoctorSync.Models;
+﻿using EcoplusDoctorSync.Helpers;
+using EcoplusDoctorSync.Models;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.FileIO;
 using System;
@@ -297,6 +298,22 @@ namespace EcoplusDoctorSync
                                 bErrors = true;
                                 continue;
                             }
+
+                            bool bdColuna = DataBaseHelper.VerificaColuna(sqlConn);
+
+                            if (bdColuna) 
+                            { 
+                                if (MessageBox.Show($"O Banco de Dados {conn.Apelido} não está com as tabelas adequadas para que a inserção seja executada.\nDeseja fazer as alterações necessárias?", $"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                {
+                                    DataBaseHelper.ReestruturacaoBD(sqlConn);
+
+                                }
+                                else 
+                                {
+                                    continue;
+                                }
+                            }
+
 
                             long iIDUtente = 0;
 
