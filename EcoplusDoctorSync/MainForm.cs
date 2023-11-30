@@ -725,7 +725,7 @@ namespace EcoplusDoctorSync
                                 }
 
                             }
-
+                                sqlConn.Close();
                         }
 
                     }
